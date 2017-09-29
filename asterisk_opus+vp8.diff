@@ -114,10 +114,10 @@ diff -urN asterisk-11.1.2/channels/chan_sip.c asterisk-11.1.2-opus/channels/chan
  				if (!(ast_rtp_codecs_payloads_set_rtpmap_type_rate(newvideortp, NULL, codec, "video", mimeSubtype, 0, sample_rate))) {
  					if (debug)
  						ast_verbose("Found video description format %s for ID %d\n", mimeSubtype, codec);
-@@ -12583,7 +12649,11 @@
- 	} else /* I don't see how you couldn't have p->rtp, but good to check for and error out if not there like earlier code */
- 		return;
- 	ast_str_append(m_buf, 0, " %d", rtp_code);
+@@ -12772,7 +12772,11 @@
+        fmt = ast_codec_pref_getsize(pref, format);
+
+        ast_str_append(m_buf, 0, " %d", rtp_code);
 -	ast_str_append(a_buf, 0, "a=rtpmap:%d %s/%d\r\n", rtp_code, mime, rate);
 +	/* Opus mandates 2 channels in rtpmap */
 +	if((int) format->id == AST_FORMAT_OPUS)
@@ -1146,14 +1146,15 @@ diff -urN asterisk-11.1.2/res/res_rtp_asterisk.c asterisk-11.1.2-opus/res/res_rt
  
  #define RTP_MTU		1200
  
-@@ -341,6 +343,9 @@
- 	double normdevrtt;
- 	double stdevrtt;
- 	unsigned int rtt_count;
-+
-+	/* VP8: sequence number for the RTCP FIR FCI */
-+	int firseq;
- };
+@@ -397,6 +397,8 @@
+        double normdevrtt;
+        double stdevrtt;
+        unsigned int rtt_count;
++       /* VP8: sequence number for the RTCP FIR FCI */
++       int firseq;
+
+ #ifdef HAVE_OPENSSL_SRTP
+        struct dtls_details dtls; /*!< DTLS state information */
  
  struct rtp_red {
 @@ -2599,6 +2604,41 @@
