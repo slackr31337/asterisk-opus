@@ -8,7 +8,7 @@ To support Opus, you'll need to install [libopus](http://www.opus-codec.org/down
 
 The patch was built on top of Asterisk 11.1.2: applying it on different versions may or may not work out of the box, but solving conflicts shouldn't be too hard anyway. Copy it in the Asterisk source folder and apply it:
 
-	patch -p1 -u < asterisk_opus+vp8.diff
+	patch -p1 --ignore-whitespace -u < asterisk_opus+vp8.diff
 
 Run the bootstrap script to regenerate the configure:
 
